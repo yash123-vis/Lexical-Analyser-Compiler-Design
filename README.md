@@ -1,10 +1,10 @@
-**Lexical Analyzer**
+#**Lexical Analyzer**
 This project implements a Lexical Analyzer using Flex and GCC. The Lexical Analyzer is designed to process and analyze input text based on the specifications provided in the Flex input file.
 
-**Overview**
+##**Overview**
 The Lexical Analyzer reads an input file, performs lexical analysis, and generates output based on the defined patterns and rules.
 
-**Requirements**
+##**Requirements**
 Flex (Fast Lexical Analyzer)
 GCC (GNU Compiler Collection)
 Windows or Unix-like operating system
