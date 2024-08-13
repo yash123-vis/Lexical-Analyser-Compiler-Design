@@ -1,0 +1,57 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+int COMMENT = 0;
+%}
+
+identifier [a-zA-Z][a-zA-Z0-9]*
+
+%%
+"/*" { COMMENT = 1; }
+"*/" { COMMENT = 0; }
+
+"#".* { if (!COMMENT) printf("\n%s is a preprocessor directive", yytext); }
+
+int|float|char|double|void { if (!COMMENT) printf("\n%s is a DATA TYPE", yytext); }
+"output" { if (!COMMENT) printf("\n%s is an OUTPUT statement", yytext); }
+"const" { if (!COMMENT) printf("\n%s is a CONSTANT", yytext); }
+
+if|else|switch { if (!COMMENT) printf("\n%s is a CONTROL statement", yytext); }
+
+"for"|"while"|"do" { if (!COMMENT) printf("\n%s is a LOOP statement", yytext); }
+
+"{" { if (!COMMENT) printf("\nBLOCK BEGINS"); }
+"}" { if (!COMMENT) printf("\nBLOCK ENDS"); }
+{identifier}\[[^\]]+\] { if (!COMMENT) printf("\n%s is an ARRAY", yytext); }
+
+{identifier}\([^\)]*\) { if (!COMMENT) printf("\nFunction\n%s is a function call", yytext); }
+{identifier} { if (!COMMENT) printf("\n%s is an identifier", yytext); }
+
+"=="|"!="|"<"|"<="|">"|">=" { if (!COMMENT) printf("\n%s is a RELATIONAL OPERATOR", yytext); }
+"=" { if (!COMMENT) printf("\n%s is an ASSIGNMENT OPERATOR", yytext); }
+"-"|"\\+"|"\\*"|"/" { if (!COMMENT) printf("\n%s is an OPERATOR", yytext); }
+
+[0-9]+ { if (!COMMENT) printf("\n%s is a CONSTANT", yytext); }
+\".*\" { if (!COMMENT) printf("\n%s is a STRING", yytext); }
+. { if (!COMMENT) ; /* Ignore other characters */ }
+%%
+
+int main(int argc, char **argv) {
+    FILE *file;
+    file = fopen("var.c", "r");
+    if (!file) {
+        printf("Could not open the file \"var.c\"\n");
+        exit(1); // Use a non-zero exit code to indicate an error
+    }
+    
+    yyin = file;
+    yylex();
+    
+    fclose(file); // Close the opened file
+    printf("\n");
+    return 0;
+}
+
+int yywrap() {
+    return 1;
+}
